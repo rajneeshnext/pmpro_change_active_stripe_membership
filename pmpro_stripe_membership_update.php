@@ -1,4 +1,5 @@
 <?php
+//Get last order for user
 $last_order = $wpdb->get_row( $wpdb->prepare( "
                       SELECT * FROM $wpdb->pmpro_membership_orders
                       WHERE user_id = %d
@@ -12,6 +13,7 @@ if($last_order){
             $stripe = new \Stripe\StripeClient($secretkey);
             if($subscription_transaction_id!=""){               
                 try{
+                    //retreive itemID from stripe.    
                     $subscriptions = $stripe->subscriptions->retrieve($subscription_transaction_id,[]);
                     $itemID = $subscriptions->items->data[0]->id;
                     if($itemID!=""){
@@ -23,7 +25,7 @@ if($last_order){
                                 'id' => $itemID,
                                 'deleted' => true,
                               ],
-                              ['price' => $stripe_price_id],// Your stripe planID, setup all plan somewhere on your website alogn with stripe
+                              ['price' => $stripe_price_id],// Your stripe planID, setup all stripe plan somewhere on your website linked with pmpro user levels.
                             ],
                             'proration_behavior' => 'none',
                           ]
